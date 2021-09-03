@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  
+  <arg name="first_tb3" default="tb3_1" />
+  <arg name="second_tb3" default="tb3_2" />
+
+  <arg name="respawn_value" default="false" /> <!-- boolean: true, false -->
+  
+    <!-- Bag file path -->
+  <arg name="bag_file1" value="$(env HOME)/.segmap/rrt/2021-07-16-16-05-49_tb3_1.bag"/>
+  <rosparam param="LaserMapper/bag_file" subst_value="True">$(arg bag_file1)</rosparam>
+
+  <!-- Bag file path -->
+  <arg name="bag_file2" value="$(env HOME)/.segmap/rrt/2021-07-16-16-05-51_tb3_2.bag"/>
+  <rosparam param="LaserMapper/bag_file" subst_value="True">$(arg bag_file2)</rosparam>
+
+  <!-- Rviz visualization config file path -->
+  <arg name="rviz_config_file" value="$(env HOME)/.segmap/rrt/rrt_loop_closure_multi.rviz"/>
+
+  <!-- ROS parameters -->
+  <rosparam>use_sim_time: false</rosparam>
+  <rosparam command="load" file="$(find segmapper)/launch/rrt/rrt_loop_closure_multi.yaml"/>
+  
+
+  <!-- rviz node -->
+  <node name="visualizer" pkg="rviz" type="rviz" output="screen" respawn="$(arg respawn_value)" args="-d $(arg rviz_config_file)" />
+  
+  <!-- rosbag player node for Robot 1 -->
+  <node name="player1" pkg="rosbag" type="play" output="screen" args=" -r 1 -s 0 -d 10 --clock $(arg bag_file1)"/>
+
+  <!-- rosbag player node for Robot 2 -->
+  <node name="player2" pkg="rosbag" type="play" output="screen" args=" -r 1 -s 0 -d 10 --clock $(arg bag_file2)"/>
+
+  <!-- octomap mapper node-->
+  <node pkg="octomap_world" type="octomap_manager" name="octomap_manager1" output="screen">         
+    <param name="tf_frame"  type="string" value="world"/>  
+    <remap from="pointcloud"     to="/segmapper/local_map"/>      
+    <param name="map_publish_frequency"  type="double" value="5.0"/>     
+    <param name="resolution"  type="double" value="0.1"/>   
+    <param name="sensor_max_range" type="double" value="20.0"/>   
+    <param name="ignore_timestamp_mismatch" type="bool" value="true"/>         
+  </node> 
+
+ <node pkg="octomap_server" type="octomap_server_node" name="octomap_server_main">
+                <param name="resolution" value="0.04" />
+                <param name="frame_id" type="string" value="world" />
+                <param name="sensor_model/max_range" value="20.0" />
+                <param name="occupancy_min_z" value="0.1" />
+                <param name="occupancy_max_z" value="0.14" />
+                <param name="pointcloud_min_z" value="0.1" />
+                <param name="pointcloud_max_z" value="0.14" />
+                <remap from="cloud_in" to="/segmapper/local_map" />
+                <remap from="projected_map" to="map" />
+                <remap from="octomap_binary" to="dummy_binary"/>
+                <remap from="octomap_full" to="dummy_full"/>
+                <remap from="occupied_cells_vis_array" to="dummy_vis_array"/>
+                <remap from="octomap_point_cloud_centers" to="dummy_pc_centers"/>
+  </node>
+
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server1">
+                <param name="resolution" value="0.04" />
+                <param name="frame_id" type="string" value="$(arg first_tb3)/odom" />
+                <param name="base_frame_id" type="string" value="$(arg first_tb3)/base_footprint"/>
+                <param name="sensor_model/max_range" value="20.0" />
+                <param name="occupancy_min_z" value="0.1" />
+                <param name="occupancy_max_z" value="0.14" />
+                <param name="pointcloud_min_z" value="0.1" />
+                <param name="pointcloud_max_z" value="0.14" />
+                <remap from="cloud_in" to="/$(arg first_tb3)/velodyne_points" />
+                <remap from="projected_map" to="/$(arg first_tb3)/map" />
+                <remap from="octomap_binary" to="dummy_binary"/>
+                <remap from="octomap_full" to="dummy_full"/>
+                <remap from="occupied_cells_vis_array" to="dummy_vis_array"/>
+                <remap from="octomap_point_cloud_centers" to="dummy_pc_centers"/>
+  </node>
+
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server2">
+                <param name="resolution" value="0.04" />
+                <param name="frame_id" type="string" value="$(arg second_tb3)/odom" />
+                <param name="base_frame_id" type="string" value="$(arg second_tb3)/base_footprint"/>
+                <param name="sensor_model/max_range" value="20.0" />
+                <param name="occupancy_min_z" value="0.1" />
+                <param name="occupancy_max_z" value="0.14" />
+                <param name="pointcloud_min_z" value="0.1" />
+                <param name="pointcloud_max_z" value="0.14" />
+                <remap from="cloud_in" to="/$(arg second_tb3)/velodyne_points" />
+                <remap from="projected_map" to="/$(arg second_tb3)/map" />
+                <remap from="octomap_binary" to="dummy_binary"/>
+                <remap from="octomap_full" to="dummy_full"/>
+                <remap from="occupied_cells_vis_array" to="dummy_vis_array"/>
+                <remap from="octomap_point_cloud_centers" to="dummy_pc_centers"/>
+  </node>
+
+  <!-- <node pkg="octomap_server" type="octomap_server_node" name="octomap_server_main">
+                <param name="resolution" value="0.04" />
+                <param name="frame_id" type="string" value="world" />
+                <param name="sensor_model/max_range" value="20.0" />
+                <param name="occupancy_min_z" value="0.1" />
+                <param name="occupancy_max_z" value="0.14" />
+                <param name="pointcloud_min_z" value="0.1" />
+                <param name="pointcloud_max_z" value="0.14" />
+                <remap from="cloud_in" to="/segmapper/local_map" />
+                <remap from="projected_map" to="map" />
+                <remap from="octomap_binary" to="dummy_binary"/>
+                <remap from="octomap_full" to="dummy_full"/>
+                <remap from="occupied_cells_vis_array" to="dummy_vis_array"/>
+                <remap from="octomap_point_cloud_centers" to="dummy_pc_centers"/>
+  </node>
+
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server1">
+                <param name="resolution" value="0.04" />
+                <param name="frame_id" type="string" value="world" />
+                <param name="base_frame_id" type="string" value="$(arg first_tb3)/base_footprint"/>
+                <param name="sensor_model/max_range" value="20.0" />
+                <param name="occupancy_min_z" value="0.1" />
+                <param name="occupancy_max_z" value="0.14" />
+                <param name="pointcloud_min_z" value="0.1" />
+                <param name="pointcloud_max_z" value="0.14" />
+                <remap from="cloud_in" to="/segmapper/$(arg first_tb3)/local_map" />
+                <remap from="projected_map" to="/$(arg first_tb3)/map" />
+                <remap from="octomap_binary" to="dummy_binary"/>
+                <remap from="octomap_full" to="dummy_full"/>
+                <remap from="occupied_cells_vis_array" to="dummy_vis_array"/>
+                <remap from="octomap_point_cloud_centers" to="dummy_pc_centers"/>
+  </node>
+
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server2">
+                <param name="resolution" value="0.04" />
+                <param name="frame_id" type="string" value="world" />
+                <param name="base_frame_id" type="string" value="$(arg second_tb3)/base_footprint"/>
+                <param name="sensor_model/max_range" value="20.0" />
+                <param name="occupancy_min_z" value="0.1" />
+                <param name="occupancy_max_z" value="0.14" />
+                <param name="pointcloud_min_z" value="0.1" />
+                <param name="pointcloud_max_z" value="0.14" />
+                <remap from="cloud_in" to="/segmapper/$(arg second_tb3)/local_map" />
+                <remap from="projected_map" to="/$(arg second_tb3)/map" />
+                <remap from="octomap_binary" to="dummy_binary"/>
+                <remap from="octomap_full" to="dummy_full"/>
+                <remap from="occupied_cells_vis_array" to="dummy_vis_array"/>
+                <remap from="octomap_point_cloud_centers" to="dummy_pc_centers"/>
+  </node> -->
+
+    <!-- segmapper node -->
+  <include file="$(find segmapper)/launch/segmapper.launch">
+    <arg name="icp_configuration_file" value="$(find segmapper)/launch/rrt/icp_dynamic_outdoor_rrt.yaml"/>
+    <arg name="icp_input_filters_file" value="$(find segmapper)/launch/rrt/input_filters_outdoor_rrt.yaml"/>
+  </include>
+	
+</launch>
