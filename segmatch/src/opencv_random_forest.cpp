@@ -31,6 +31,7 @@ void OpenCvRandomForest::resetParams(const ClassifierParams& params) {
   LOG(INFO) << "knn_feature_dim: " << params_.knn_feature_dim;
   LOG(INFO) << "threshold_to_accept_match: " << params_.threshold_to_accept_match;
   LOG(INFO) << "classifier_filename: " << params_.classifier_filename;
+  LOG(INFO) << "min_number_segment_in_targetCloud: " << params_.min_number_segment_in_targetCloud;
 
   params_ = params;
 }
@@ -137,9 +138,10 @@ PairwiseMatches OpenCvRandomForest::findCandidates(
   PairwiseMatches candidates;
   PairwiseMatches candidates_after_first_stage;
 
+  LOG(INFO) << "Number of valid segments: " << target_cloud_.getNumberOfValidSegments();
   if (target_cloud_.empty()
       || target_cloud_.getNumberOfValidSegments()
-          < kMinNumberSegmentInTargetCloud) {
+          < params_.min_number_segment_in_targetCloud) {
     return candidates;
   }
 
@@ -234,9 +236,9 @@ PairwiseMatches OpenCvRandomForest::findCandidates(
             candidates.push_back(candidate);
           }
         }
-        /*LOG(INFO) << "candidates_after_first_stage.size() " <<
+        LOG(INFO) << "candidates_after_first_stage.size() " <<
             candidates_after_first_stage.size() << " candidates.size() " <<
-            candidates.size();*/
+            candidates.size();
       } else {
         // Two stage knn and RF.
         CHECK(false) << "RF is not implemented anymore.";
@@ -250,7 +252,7 @@ PairwiseMatches OpenCvRandomForest::findCandidates(
     CHECK(false) << "RF is not implemented anymore.";
   }
 
-  //LOG(INFO)<< "Found " << candidates.size() << " candidates.";
+  LOG(INFO)<< "Found " << candidates.size() << " candidates.";
   return candidates;
 }
 

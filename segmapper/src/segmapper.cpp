@@ -113,7 +113,7 @@ SegMapper::~SegMapper() {}
 
 void SegMapper::publishMapThread() {
   // Check if map publication is required.
-  if (!laser_slam_worker_params_.publish_local_map)
+  if (!params_.publish_overall_local_map)
     return;
 
   ros::Rate thread_rate(laser_slam_worker_params_.map_publication_rate_hz);
@@ -360,6 +360,8 @@ void SegMapper::getParameters() {
 
   nh_.getParam(ns + "/publish_world_to_odom",
                params_.publish_world_to_odom);
+  nh_.getParam(ns + "/publish_overall_local_map",
+               params_.publish_overall_local_map);
   nh_.getParam(ns + "/world_frame",
                params_.world_frame);
   nh_.getParam(ns + "/tf_publication_rate_hz",

@@ -239,6 +239,8 @@ static segmatch::SegMatchParams getSegMatchParams(const ros::NodeHandle& nh,
               params.classifier_params.apply_hard_threshold_on_feature_distance);
   nh.getParam(ns + "/Classifier/feature_distance_threshold",
               params.classifier_params.feature_distance_threshold);
+  nh.getParam(ns + "/Classifier/min_number_segment_in_targetCloud",
+              params.classifier_params.min_number_segment_in_targetCloud);
 
   nh.getParam(ns + "/Classifier/normalize_eigen_for_knn",
               params.classifier_params.normalize_eigen_for_knn);

@@ -233,6 +233,7 @@ PairwiseMatches SegMatch::filterMatches(const PairwiseMatches& predicted_matches
     }
   }
 
+  LOG(INFO)<< "Found " << filtered_matches.size() << " filtered candidate matches.";
   return filtered_matches;
 }
 

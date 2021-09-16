@@ -68,6 +68,7 @@ struct ClassifierParams {
   int knn_feature_dim;
   bool apply_hard_threshold_on_feature_distance;
   double feature_distance_threshold;
+  int min_number_segment_in_targetCloud;
 
   bool normalize_eigen_for_knn;
   bool normalize_eigen_for_hard_threshold;

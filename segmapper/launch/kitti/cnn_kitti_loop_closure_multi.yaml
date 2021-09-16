@@ -85,6 +85,7 @@ SegMapper: {
      enable_two_stage_retrieval: false,
      apply_hard_threshold_on_feature_distance: false,
      feature_distance_threshold: 100, #25
+     min_number_segment_in_targetCloud: 50,
 
      normalize_eigen_for_knn: false,
      normalize_eigen_for_hard_threshold: false,

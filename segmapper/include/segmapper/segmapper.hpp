@@ -26,6 +26,7 @@ struct SegMapperParams {
 
   // Enable publishing a tf transform from world to odom.
   bool publish_world_to_odom;
+  bool publish_overall_local_map;
   std::string world_frame;
   double tf_publication_rate_hz;
 

@@ -6,6 +6,7 @@ SegMapper: {
   clear_local_map_after_loop_closure: false,
   
   publish_world_to_odom: true,
+  publish_overall_local_map: true,
   tf_publication_rate_hz: 10,
   
   LaserSlamWorker: {
@@ -82,6 +83,7 @@ SegMapper: {
      enable_two_stage_retrieval: true,
      apply_hard_threshold_on_feature_distance: true,
      feature_distance_threshold: 0.01,
+    min_number_segment_in_targetCloud: 50,
      
      normalize_eigen_for_knn: false,
      normalize_eigen_for_hard_threshold: true,
