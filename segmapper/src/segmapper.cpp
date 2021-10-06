@@ -62,26 +62,24 @@ SegMapper::SegMapper(ros::NodeHandle& n) : nh_(n) {
         segmatch_worker_params_.segmatch_params.local_map_params, std::move(normal_estimator));
 
     // TODO rm offset when updating mr_foundry.
-    const unsigned int offset = 0;
-    if (params_.number_of_robots > 1) {
-      // Subscribers.
+    const unsigned int offset = 1;
+    // Subscribers.
 
-      params.assembled_cloud_sub_topic = "/" + params_.robot_prefix + std::to_string(i + offset) +
-          "/" + laser_slam_worker_params_.assembled_cloud_sub_topic;
+    params.assembled_cloud_sub_topic = "/" + params_.robot_prefix + std::to_string(i + offset) +
+        "/" + laser_slam_worker_params_.assembled_cloud_sub_topic;
 
-      // TF frames.
-      params.odom_frame =  params_.robot_prefix + std::to_string(i + offset) +
-          "/" + laser_slam_worker_params_.odom_frame;
-      params.sensor_frame =  params_.robot_prefix + std::to_string(i + offset) +
-          "/" + laser_slam_worker_params_.sensor_frame;
+    // TF frames.
+    params.odom_frame =  params_.robot_prefix + std::to_string(i + offset) +
+        "/" + laser_slam_worker_params_.odom_frame;
+    params.sensor_frame =  params_.robot_prefix + std::to_string(i + offset) +
+        "/" + laser_slam_worker_params_.sensor_frame;
 
-      // Publishers.
-      params.trajectory_pub_topic = params_.robot_prefix + std::to_string(i + offset) + "/" +
-          laser_slam_worker_params_.trajectory_pub_topic;
+    // Publishers.
+    params.trajectory_pub_topic = params_.robot_prefix + std::to_string(i + offset) + "/" +
+        laser_slam_worker_params_.trajectory_pub_topic;
 
-      params.local_map_pub_topic = params_.robot_prefix + std::to_string(i + offset) + "/" +
-          laser_slam_worker_params_.local_map_pub_topic;
-    }
+    params.local_map_pub_topic = params_.robot_prefix + std::to_string(i + offset) + "/" +
+        laser_slam_worker_params_.local_map_pub_topic;
 
     LOG(INFO) << "Robot " << i + offset << " subscribes to " << params.assembled_cloud_sub_topic << " "
         << params.odom_frame << " and " << params.sensor_frame;
@@ -353,6 +351,12 @@ void SegMapper::getParameters() {
   const std::string ns = "/SegMapper";
   nh_.getParam(ns + "/number_of_robots",
                params_.number_of_robots);
+
+  if (params_.number_of_robots == 1) {
+    nh_.getParam(ns + "/robot_id",
+                params_.robot_id);
+  }
+
   nh_.getParam(ns + "/robot_prefix",
                params_.robot_prefix);
 

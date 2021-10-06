@@ -31,6 +31,7 @@ void GraphBasedGeometricConsistencyRecognizer::recognize(
   BENCHMARK_START("SM.Worker.Recognition.FindClique");
   std::vector<size_t> maximum_clique =  GraphUtilities::findMaximumClique(
       consistency_graph, params_.min_cluster_size);
+  std::cout << "Maximum clique size: " << maximum_clique.size() << std::endl;
   BENCHMARK_STOP("SM.Worker.Recognition.FindClique");
 
   if (maximum_clique.empty()) return;

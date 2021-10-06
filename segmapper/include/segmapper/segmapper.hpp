@@ -21,6 +21,7 @@ struct SegMapperParams {
   // Multi robot parameters.
   int number_of_robots;
   std::string robot_prefix;
+  int robot_id;
 
   bool clear_local_map_after_loop_closure = true;
 

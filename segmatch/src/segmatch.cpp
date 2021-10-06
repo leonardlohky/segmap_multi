@@ -233,7 +233,7 @@ PairwiseMatches SegMatch::filterMatches(const PairwiseMatches& predicted_matches
     }
   }
 
-  LOG(INFO)<< "Found " << filtered_matches.size() << " filtered candidate matches.";
+  LOG(INFO)<< "Found " << filtered_matches.size() << " filtered/predicted candidate matches.";
   return filtered_matches;
 }
 
@@ -256,6 +256,7 @@ const PairwiseMatches& SegMatch::recognize(const PairwiseMatches& predicted_matc
     return last_filtered_matches_;
   } else {
     last_filtered_matches_ = candidate_clusters.front();
+    LOG(INFO)<< "Found " << last_filtered_matches_.size() << " cluster matches.";
   }
 
   // If desired, return the loop-closure.
